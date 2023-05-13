@@ -18,10 +18,17 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  @apply bg-slate-50
+}
+
+input:focus {
+@apply border-[2px] border-red-500
+}
+
+input::placeholder {
+@apply text-gray-500
+}
+
+.input {
+@apply p-3 bg-[#d6abab] border-[2px] border-transparent outline-0 rounded-md
 }
