@@ -1,7 +1,6 @@
 import React from "react";
 
 const FormGroup = (props) => {
-  console.log(props.error);
   return (
     <div className={props.className}>
       {props.children}

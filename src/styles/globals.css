@@ -19,6 +19,7 @@
 body {
   color: rgb(var(--foreground-rgb));
   @apply bg-slate-50
+
 }
 
 input:focus {

@@ -7,14 +7,21 @@ import { useErrors } from "../hooks/useError";
 import isEmailValid from "../utils/isEmailValid";
 import { useState } from "react";
 import Link from "next/link";
+import { UserService } from "../services/UserService";
+import {toast} from "react-toastify";
+import { useRouter } from "next/router";
 
 
 const signUp = () => {
-  const {errors, setError, removeError, getErrorMessageByFieldName} = useErrors();
+  const { errors, setError, removeError, getErrorMessageByFieldName} = useErrors();
   const [email,setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [password, setPassword] = useState("");
+  const router = useRouter();
+  const formIsValid = (email && name && lastName && password.length > 0 && errors.length === 0);
 
   function handleChangeEmail(e) {
-    console.log("aqui");
     setEmail(e.target.value);
 
     if (e.target.value && !isEmailValid(e.target.value)) {
@@ -24,6 +31,33 @@ const signUp = () => {
       });
     } else {
       removeError("E-mail");
+    }
+  }
+
+  async function handleSubmitRegister() {
+    const formData = {
+      name,
+      lastName,
+      email,
+      password
+    };
+    const request = JSON.stringify(formData);
+    try {
+      await UserService.create(request);
+      toast("Conta criada com sucesso", {
+        position: "bottom-left",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      router.push("/");
+
+    } catch (err) {
+      console.log(err.response);
     }
   }
 
@@ -49,17 +83,17 @@ const signUp = () => {
         </FormGroup>
         <FormGroup className="flex w-full flex-col mb-3">
           <label>Nome</label>
-          <input type="text" placeholder="Digite seu primeiro nome" className="input" />
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Digite seu primeiro nome" className="input" />
         </FormGroup>
         <FormGroup className="flex w-full flex-col mb-3">
-          <label>Último Nome</label>
-          <input type="text" placeholder="Digite seu Último nome" className="input" />
+          <label>Último nome</label>
+          <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Digite seu último nome" className="input" />
         </FormGroup>
         <FormGroup className="flex w-full flex-col mb-3">
           <label>Senha</label>
-          <input type="password" placeholder="Digite sua senha" className="input" />
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Digite sua senha" className="input" />
         </FormGroup>
-        <Button>
+        <Button onClick={handleSubmitRegister} isValid={formIsValid}>
           Cadastrar
         </Button>
       </Wrapper>
