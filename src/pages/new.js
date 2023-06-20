@@ -5,9 +5,11 @@ import FormGroup from "../components/formGroup/FormGroup";
 import { useSession } from "next-auth/react";
 import { SeriesService } from "../services/SeriesServices";
 import { PlatFormService } from "../services/PlatformsServices";
+import { useRouter } from "next/router";
+import { toast } from "react-toastify";
 
 const NewSerie = () => {
-  const [serie, setSerie] = useState();
+  const [serie] = useState();
   const [allPlatforms, allSetPlatforms] = useState([]);
   const [name, setName] = useState(serie?.name);
   const [description, setDescription] = useState(serie?.description);
@@ -17,6 +19,7 @@ const NewSerie = () => {
   const [idPlatform, setIdPlatform] = useState("");
   const session = useSession();
   const userId = session.data?.user.id;
+  const router = useRouter();
 
 
   useEffect(() => {
@@ -57,6 +60,17 @@ const NewSerie = () => {
     } catch (err) {
       console.log(err);
     }
+    toast("Série Cadastrada com Sucesso", {
+      position: "bottom-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+    router.push("/home");
   }
 
   function captureImagem(e) {
@@ -101,20 +115,23 @@ const NewSerie = () => {
         <div className="w-full">
           <FormGroup className="flex flex-col gap-2 mb-3">
             <label>Nome</label>
-            <input type="text" onChange={(e) => setName(e.target.value)} value={name || serie?.name} className="input" />
+            <input type="text" placeholder="Nome da série" onChange={(e) => setName(e.target.value)} value={name || serie?.name} className="input" />
           </FormGroup>
           <FormGroup className="flex flex-col gap-2 mb-3">
             <label>Descrição</label>
-            <textarea onChange={(e) => setDescription(e.target.value)} value={description || serie?.description} className="input h-28" />
+            <textarea placeholder="Descrição da série" onChange={(e) => setDescription(e.target.value)} value={description || serie?.description} className="input h-28 placeholder:text-gray-500" />
           </FormGroup>
           <div className="flex justify-center" onClick={() => document.getElementById("file").click()}>
-            <img src={`${srcImage ? srcImage : `http://localhost:3001/tmp/${serie?.image}`}`} width={200} height={200} />
+            {srcImage && <img src={srcImage} width={200} height={200} /> }
+            {!srcImage && <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-20 h-20">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+            </svg>
+            }
             <input onChange={captureImagem} id="file" name="file" accept="image/*" type="file"style={{display: "none"}} />
           </div>
           <div className="flex items-center justify-around mb-3">
             {allPlatforms?.map((platform) => (
               <FormGroup key={platform.id} className="flex items-center">
-                {console.log(platform)}
                 <input data-id={platform.id} id={platform.id} checked={selectedPlatform === platform.name} onChange={() => handleCheckboxChange(platform.name, platform.id)} type="checkbox" className=" w-5 h-5" />
                 <label htmlFor={platform.name} className="cursor-pointer">
                   <img src={`http://localhost:3001/tmp/${platform.image}`} width={52} height={52} />
@@ -124,9 +141,7 @@ const NewSerie = () => {
           </div>
           <div className="flex gap-3">
             <button type="submit" className="bg-[#CC3434] px-1 py-2
-  rounded-md text-white w-full font-medium text-xl hover:bg-[#c22525] transition active:bg-[#c22525]">Salvar</button>
-            <button className="bg-[#CC3434] px-1 py-2
-  rounded-md text-white w-full font-medium text-xl hover:bg-[#c22525] transition active:bg-[#c22525]">Deletar</button>
+  rounded-md text-white w-full text-center cursor-pointer font-medium text-xl hover:bg-[#c22525] transition active:bg-[#c22525]">Salvar</button>
           </div>
         </div>
       </div>

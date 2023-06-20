@@ -63,4 +63,26 @@ export class SeriesService {
       console.log(err.message);
     }
   }
+
+  static async deleteSerieList(data) {
+    try {
+      const response = await axiosConfig.delete("/serie/list-status", data, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+      return response.data;
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+
+  static async deleteSerie(id) {
+    try {
+      const response = await axiosConfig.delete(`/serie/${id}`);
+      return response;
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
 }

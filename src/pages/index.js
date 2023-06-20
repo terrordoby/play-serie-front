@@ -39,7 +39,6 @@ export default function Home() {
   }
 
   useEffect(() => {
-    console.log({session});
     if (session.status === "authenticated") {
       router.replace("/home");
     }

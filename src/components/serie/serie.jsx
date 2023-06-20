@@ -2,11 +2,16 @@ import React, { useEffect, useState } from "react";
 import { SeriesService } from "../../services/SeriesServices";
 import { UserService } from "../../services/UserService";
 import CardSerie from "./cardSerie";
+import netflix from "../../../public/images/netflix.svg";
+import hbo from "../../../public/images/hbo.svg";
+import prime_video from "../../../public/images/prime_video.svg";
+import Image from "next/image";
 
 
 const Series = (props) => {
   const [seriesFavorites, setSeriesFavorites] = useState([]);
   const [seriesToWatch, setSeriesTpWatch] = useState([]);
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     async function getUserSeries() {
@@ -21,7 +26,7 @@ const Series = (props) => {
       }
     }
     getUserSeries();
-  },[props.userId]);
+  },[props.userId, refresh]);
 
   useEffect(() => {
     async function getUserSeries() {
@@ -36,19 +41,36 @@ const Series = (props) => {
       }
     }
     getUserSeries();
-  },[props.userId]);
+  },[props.userId, refresh]);
 
-  async function addStatusToSerie(serieId, status) {
-    try {
-      const formData = {
-        status,
-        userId: props.userId,
-        serieId
-      };
-      await SeriesService.addStatusToSerie(formData);
-    } catch (err) {
-      console.log(err.message);
+  function getPlatform(name) {
+    const nameFormated = name.toLowerCase();
+    switch (nameFormated){
+    case "netflix":
+      return <Image width={37} height={37} src={netflix} />;
+    case "hbo":
+      return <Image width={37} height={37} src={hbo} />;
+    case "prime":
+      return <Image width={37} height={37}  src={prime_video} />;
     }
+  }
+
+  async function addStatusToSerie(serieId, status, listSerie) {
+    const formData = {
+      status,
+      userId: props.userId,
+      serieId
+    };
+    if (listSerie) {
+      try {
+        await SeriesService.deleteSerieList(formData);
+      } catch (err) {
+        console.log(err.message);
+      }
+    } else {
+      await SeriesService.addStatusToSerie(formData);
+    }
+    setRefresh((prevRefresh) => !prevRefresh);
   }
 
   function handleAddSeriesToFavoriteList(id) {
@@ -62,7 +84,7 @@ const Series = (props) => {
   }
 
   return (
-    <div className="flex gap-7">
+    <div className="flex gap-7 flex-wrap h-screen items-start">
       {props.series?.map((serie) => {
         const isFavorite = handleAddSeriesToFavoriteList(serie.id);
         const watch = handleSeriesToWatch(serie.id);
@@ -73,7 +95,7 @@ const Series = (props) => {
             watch={watch}
             isFavorite={isFavorite}
             onAddStatusToSerie={addStatusToSerie}
-            onGetPlatform={props.onGetPlatform}
+            onGetPlatform={getPlatform}
           />
         );
       })}

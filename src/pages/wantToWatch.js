@@ -1,16 +1,13 @@
-import React from "react";
-import Navbar from "../components/navbar/Navbar";
-import { useState } from "react";
-import { useEffect } from "react";
-import {UserService} from "../services/UserService";
 import { useSession } from "next-auth/react";
+import React, { useEffect, useState } from "react";
+import { UserService } from "../services/UserService";
+import Navbar from "../components/navbar/Navbar";
 import Series from "../components/serie/serie";
 
-const favoriteSeries = () => {
+const wantToWatch = () => {
   const [series, setSeries] = useState([]);
   const userSession = useSession();
   const userId = userSession?.data?.user.id;
-  console.log(series);
 
   useEffect(() => {
     async function loadSeries() {
@@ -18,7 +15,7 @@ const favoriteSeries = () => {
         const formData = {
           userId
         };
-        const result = await UserService.getUserSeries(formData, "GOSTEI");
+        const result = await UserService.getUserSeries(formData, "DESEJO_ASSISTIR");
         setSeries(result);
       } catch (err) {
         console.log(err.message);
@@ -34,4 +31,4 @@ const favoriteSeries = () => {
   );
 };
 
-export default favoriteSeries;
+export default wantToWatch;

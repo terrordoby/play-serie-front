@@ -22,4 +22,13 @@ export class UserService {
       console.log(err.message);
     }
   }
+
+  static async getAllUsers() {
+    try {
+      const result = await axiosConfig.get("/users");
+      return result.data;
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
 }

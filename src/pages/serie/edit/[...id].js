@@ -5,6 +5,8 @@ import { useEffect } from "react";
 import { SeriesService } from "../../../services/SeriesServices";
 import { useRouter } from "next/router";
 import { PlatFormService } from "../../../services/PlatformsServices";
+import * as AlertDialog from "@radix-ui/react-alert-dialog";
+import { toast } from "react-toastify";
 
 const EditSerie = () => {
   const [serie, setSerie] = useState();
@@ -65,6 +67,17 @@ const EditSerie = () => {
     } catch (error) {
       console.error(error);
     }
+    toast("Série atualizada com sucesso", {
+      position: "bottom-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+    router.push("/home");
   }
 
   function captureImagem(e) {
@@ -86,6 +99,26 @@ const EditSerie = () => {
       // Método responsável por ler o conteúdo
       readFile.readAsDataURL(e.target.files[0]);
     }
+  }
+
+  async function deleteSerie() {
+    try {
+      await SeriesService.deleteSerie(id);
+    } catch (err) {
+      console.log(err.message);
+    }
+
+    toast("Série excluída com Sucesso", {
+      position: "bottom-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+    router.push("/home");
   }
 
   return (
@@ -131,9 +164,30 @@ const EditSerie = () => {
           </div>
           <div className="flex gap-3">
             <button type="submit" className="bg-[#CC3434] px-1 py-2
-    rounded-md text-white w-full font-medium text-xl hover:bg-[#c22525] transition active:bg-[#c22525]">Salvar</button>
-            <button className="bg-[#CC3434] px-1 py-2
-    rounded-md text-white w-full font-medium text-xl hover:bg-[#c22525] transition active:bg-[#c22525]">Deletar</button>
+    rounded-md text-white cursor-pointer text-center w-full font-medium text-xl hover:bg-[#c22525] transition active:bg-[#c22525]">Salvar</button>
+            <AlertDialog.Root>
+              <AlertDialog.Trigger asChild>
+                <button className=" bg-red-400 px-1 py-2
+    rounded-md text-white cursor-pointer text-center w-full font-medium text-xl hover:bg-[#c22525] transition active:bg-[#c22525]">Deletar Série</button>
+              </AlertDialog.Trigger>
+              <AlertDialog.Portal>
+                <AlertDialog.Overlay className="AlertDialogOverlay" />
+                <AlertDialog.Content className="AlertDialogContent">
+                  <AlertDialog.Title className=" font-semibold rounded-sm bg-red-300 px-2 text-center mb-3 text-xl text-red-800">Tem certeza que deseja deletar ?</AlertDialog.Title>
+                  <AlertDialog.Description className=" text-gray-900 mb-7">
+                    Esta ação é permanente e não poderá ser desfeita.
+                  </AlertDialog.Description>
+                  <div style={{ display: "flex", gap: 25, justifyContent: "flex-end" }}>
+                    <AlertDialog.Cancel asChild>
+                      <button className="Button mauve">Cancelar</button>
+                    </AlertDialog.Cancel>
+                    <AlertDialog.Action asChild>
+                      <button className="Button red" onClick={deleteSerie}>Sim, deletar série</button>
+                    </AlertDialog.Action>
+                  </div>
+                </AlertDialog.Content>
+              </AlertDialog.Portal>
+            </AlertDialog.Root>
           </div>
         </div>
       </div>

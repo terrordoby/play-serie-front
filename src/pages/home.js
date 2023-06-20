@@ -1,7 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
 import React, { useState } from "react";
-import logo from "../../public/images/logo.svg";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import netflix from "../../public/images/netflix.svg";
@@ -11,11 +9,13 @@ import { SeriesService } from "../services/SeriesServices";
 import { useRouter } from "next/router";
 import Series from "../components/serie/serie";
 import Navbar from "../components/navbar/Navbar";
+import ManagerModeProvider from "../context/managerModeContext";
+import { useMemo } from "react";
 
 const home = () => {
   const userSesion = useSession();
-  const username = userSesion?.data?.user.name;
   const [series, setSeries] = useState([]);
+  const [search, setSearch] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -42,10 +42,16 @@ const home = () => {
     }
   }
 
+  const searchLowerCase = search.toLowerCase();
+
+  const filteredSeries = useMemo(() => (
+    series?.filter(serie => serie.name.toLowerCase().includes(searchLowerCase))
+  ), [series, search]);
+
   return (
-    <div>
-      <Navbar />
-      <main className="p-3 bg-[#D9D9D9] h-screen">
+    <ManagerModeProvider>
+      <Navbar search={search} onSearch={setSearch} />
+      <main className="p-3 bg-[#D9D9D9] h-full">
         <div className=" bg-[#D9D9D9] mb-3">
           <button className="flex gap-2 items-center px-2 rounded-md font-medium text-lg py-3 bg-black text-white hover:scale-110" onClick={() => router.push("/new")}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
@@ -54,9 +60,9 @@ const home = () => {
           Adicionar Série
           </button>
         </div>
-        <Series userId={userSesion.data?.user.id} series={series} onGetPlatform={getPlatform} />
+        <Series userId={userSesion.data?.user.id} series={filteredSeries} onGetPlatform={getPlatform} />
       </main>
-    </div>
+    </ManagerModeProvider>
   );
 };
 
