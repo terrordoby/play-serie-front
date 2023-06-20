@@ -66,7 +66,7 @@ export class SeriesService {
 
   static async deleteSerieList(data) {
     try {
-      const response = await axiosConfig.delete("/serie/list-status", data, {
+      const response = await axiosConfig.post("/serie/list-status", data, {
         headers: {
           "Content-Type": "application/json"
         }

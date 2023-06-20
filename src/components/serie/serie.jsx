@@ -63,6 +63,7 @@ const Series = (props) => {
     };
     if (listSerie) {
       try {
+        console.log(formData);
         await SeriesService.deleteSerieList(formData);
       } catch (err) {
         console.log(err.message);

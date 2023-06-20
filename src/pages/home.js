@@ -46,7 +46,7 @@ const home = () => {
 
   const filteredSeries = useMemo(() => (
     series?.filter(serie => serie.name.toLowerCase().includes(searchLowerCase))
-  ), [series, search]);
+  ), [series,search]);
 
   return (
     <ManagerModeProvider>

@@ -8,7 +8,6 @@ import { useContext } from "react";
 import { ManagerContext } from "../../context/managerModeContext";
 
 const CardSerie = (props) => {
-  console.log(props);
   const {managerMode} = useContext(ManagerContext);
   return (
     <div className="bg-[#D9D9D9] rounded-md shadow-lg relative" key={props.serie.id}>

@@ -42,7 +42,7 @@ export default function Home() {
     if (session.status === "authenticated") {
       router.replace("/home");
     }
-  },[session]);
+  },[]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -53,7 +53,7 @@ export default function Home() {
         redirect: false,
       });
       if (!res.error) {
-        router.push("/");
+        window.location.href = "/home";
       }
 
       if (res.error) {
@@ -92,7 +92,7 @@ export default function Home() {
           </div>
           <div className="flex gap-3 items-center">
             <input type="checkbox" value={checkboxRecoverPassword} onChange={(e) => setCheckboxRecoverPassword(e.target.checked)} className="w-5 h-5" />
-            <Link href="/signUp" onClick={redirectSignUp} className={`font-bold flex items-center gap-2 mb-1 ${checkboxRecoverPassword ? " cursor-pointer font-medium" : "pointer-events-none font-normal opacity-90"}`}>
+            <Link href="/forgot-password" onClick={redirectSignUp} className={`font-bold flex items-center gap-2 mb-1 ${checkboxRecoverPassword ? " cursor-pointer font-medium" : "pointer-events-none font-normal opacity-90"}`}>
             Esqueci minha senha
             </Link>
           </div>
